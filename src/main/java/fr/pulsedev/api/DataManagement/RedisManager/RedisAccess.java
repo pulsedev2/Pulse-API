@@ -26,8 +26,43 @@ public class RedisAccess {
         this.redissonClient = initRedisson(redisCredentials);
     }
 
-    public static void init(){
-        new RedisAccess(new RedisCredentials("127.0.0.1", "", 6379), 0, 0, 0);
+    public RedisAccess(RedisCredentials redisCredentials, int threadNumber,int dateBaseNumber){
+        this(redisCredentials, threadNumber, threadNumber, dateBaseNumber);
+    }
+
+    public RedisAccess(RedisCredentials redisCredentials, int threadNumber){
+        this(redisCredentials, threadNumber, threadNumber, 0);
+    }
+
+    public RedisAccess(RedisCredentials redisCredentials){
+        this(redisCredentials, 0, 0, 0);
+    }
+
+
+    public static void init(RedisCredentials redisCredentials, int threadNumber, int nettyThreadsNumber, int dateBaseNumber){
+        new RedisAccess(redisCredentials, threadNumber, nettyThreadsNumber, dateBaseNumber);
+    }
+    public static void init(RedisCredentials redisCredentials, int threadNumber, int dateBaseNumber){
+        new RedisAccess(redisCredentials, threadNumber, dateBaseNumber);
+    }
+    public static void init(RedisCredentials redisCredentials, int threadNumber){
+        new RedisAccess(redisCredentials, threadNumber);
+    }
+    public static void init(RedisCredentials redisCredentials){
+        new RedisAccess(redisCredentials);
+    }
+
+
+    public void setThreadNumber(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
+
+    public void setNettyThreadsNumber(int nettyThreadsNumber) {
+        this.nettyThreadsNumber = nettyThreadsNumber;
+    }
+
+    public void setDateBaseNumber(int dateBaseNumber) {
+        this.dateBaseNumber = dateBaseNumber;
     }
 
     public static void close(){
@@ -38,12 +73,12 @@ public class RedisAccess {
         final Config config = new Config();
 
         config.setCodec(new JsonJacksonCodec());
-        config.setThreads(4);
-        config.setNettyThreads(4);
+        config.setThreads(getThreadNumber());
+        config.setNettyThreads(getNettyThreadsNumber());
         config.useSingleServer()
                 .setAddress(redisCredentials.toRedisUrl())
                 .setPassword(redisCredentials.getPassword())
-                .setDatabase(3)
+                .setDatabase(getDateBaseNumber())
                 .setClientName(redisCredentials.getClientName());
 
         return Redisson.create(config);
@@ -51,5 +86,17 @@ public class RedisAccess {
 
     public RedissonClient getRedissonClient() {
         return redissonClient;
+    }
+
+    public int getThreadNumber() {
+        return threadNumber;
+    }
+
+    public int getNettyThreadsNumber() {
+        return nettyThreadsNumber;
+    }
+
+    public int getDateBaseNumber() {
+        return dateBaseNumber;
     }
 }

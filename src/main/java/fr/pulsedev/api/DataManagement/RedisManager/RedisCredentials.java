@@ -21,10 +21,6 @@ public class RedisCredentials {
         this.clientName = clientName;
     }
 
-    public RedisCredentials(String ip, String password, int port){
-        this(ip, password, port, "Redis_primrpg_access");
-    }
-
     public String getIp() {
         return ip;
     }
