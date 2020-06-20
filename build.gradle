@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'pulsedev'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {url "https://gitlab.com/RenardFute/repo/raw/master"}
+}
+
+dependencies {
+    implementation 'spigot:spigot:1.15.2'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.11.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.0'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.11.0'
+    implementation 'org.redisson:redisson:3.13.1'
+    implementation 'org.jetbrains:annotations:19.0.0'
+}
+
+publishing {
+    publications {
+        apiPublication(MavenPublication) {
+            from components.java
+            pom{
+                name = "PulseAPI"
+                description = "API for Spigot Plugin"
+                developers {
+                    developer {
+                        id = "RenardFute"
+                        name = "Axel"
+                        email = "renardfute@pulsedev.fr"
+                    }
+                    developer{
+                        id = "Niout"
+                        name = "Tim"
+                        email = "niout@pulsedev.fr"
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url "https://gitlab.com/api/v4/projects/19500743/packages/maven"
+            name "GitLab"
+            credentials(HttpHeaderCredentials) {
+                name = 'Private-Token'
+                value = 'yxzzxmw9cAQHnsNZtiJP'
+            }
+            authentication {
+                header(HttpHeaderAuthentication)
+            }
+        }
+    }
+}
