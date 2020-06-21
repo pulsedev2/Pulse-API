@@ -13,7 +13,6 @@ package fr.pulsedev.api.Player;
 
 import fr.pulsedev.api.DataManagement.SqlManager.SqlManager;
 import fr.pulsedev.api.Interfaces.CustomPlugin;
-import fr.pulsedev.api.Main;
 import fr.pulsedev.api.utils.Inventory.Inventory;
 import fr.pulsedev.api.utils.Inventory.InventoryManager;
 import fr.pulsedev.api.utils.Lang.MessageConfiguration;
@@ -26,7 +25,7 @@ import java.util.Objects;
 public class ApiPlayer extends CraftPlayer {
 
     private Player player;
-    private final SqlManager sqlManager = new SqlManager(Main.INSTANCE.sql);
+    private SqlManager sqlManager;
     private CustomPlugin plugin;
 
     public ApiPlayer(Player player, CustomPlugin plugin){
@@ -34,6 +33,8 @@ public class ApiPlayer extends CraftPlayer {
 
         this.plugin = plugin;
         this.player = player;
+
+        sqlManager = new SqlManager(plugin.getSQL());
     }
 
     public boolean isAlreadyIntoDataBase(){

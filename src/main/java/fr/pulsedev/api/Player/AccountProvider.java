@@ -14,7 +14,6 @@ package fr.pulsedev.api.Player;
 import fr.pulsedev.api.DataManagement.RedisManager.RedisAccess;
 import fr.pulsedev.api.DataManagement.SqlManager.SqlManager;
 import fr.pulsedev.api.Interfaces.CustomPlugin;
-import fr.pulsedev.api.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.redisson.api.RBucket;
@@ -51,7 +50,7 @@ public class AccountProvider {
     }
 
     private ApiPlayer getPlayerFromDataBase(){
-        final SqlManager sqlManager = new SqlManager(Main.INSTANCE.sql);
+        final SqlManager sqlManager = new SqlManager(customPlugin.getSQL());
 
         return new ApiPlayer(Bukkit.getPlayer(sqlManager.getString("player", "uuid", player.getUniqueId().toString(), "name")), customPlugin);
     }

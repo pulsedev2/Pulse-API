@@ -1,5 +1,6 @@
 package fr.pulsedev.api.Interfaces;
 
+import fr.pulsedev.api.DataManagement.SqlManager.SQL;
 import fr.pulsedev.api.utils.Lang.Locate;
 import org.bukkit.plugin.Plugin;
 
@@ -15,5 +16,7 @@ public interface CustomPlugin<K extends  Plugin> {
     Locate getLocate();
 
     K getInstance();
+
+    SQL getSQL();
 
 }
