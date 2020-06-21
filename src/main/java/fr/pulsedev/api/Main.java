@@ -4,8 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import fr.pulsedev.api.DataManagement.SqlManager.SQL;
 import fr.pulsedev.api.utils.Lang.Locate;
-import fr.pulsedev.api.utils.NPC.NPC;
-import fr.pulsedev.api.utils.NPC.NPCBuilder;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.apache.commons.codec.binary.Base64;
 import org.bukkit.inventory.ItemStack;
@@ -46,9 +44,6 @@ public class Main{
         } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e1) {
             e1.printStackTrace();
         }
-
-        NPC npc = new NPCBuilder().setName("tes").setSkin("qds").build();
-
         head.setItemMeta(headMeta);
         return head;
     }

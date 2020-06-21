@@ -72,4 +72,8 @@ public class NPCBuilder{
     public NPC build(){
         return npc;
     }
+
+    public NPC build(){
+        return npc;
+    }
 }
