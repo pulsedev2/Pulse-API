@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class NPC extends EntityPlayer {
+public class NPC extends EntityPlayer{
 
     private EntityPlayer npc;
     private String name = "Default Name";
