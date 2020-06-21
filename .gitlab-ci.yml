@@ -19,15 +19,3 @@ build:
     paths:
       - build
       - .gradle
-
-deploy:
-  stage: deploy
-  script: gradle publish --stacktrace
-  only:
-    - master
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: pull
-    paths:
-      - build
-      - .gradle
