@@ -47,6 +47,9 @@ public class Locate {
 
     public void register(){
         File locationFolder = new File(plugin.getDataFolder().getPath() + File.pathSeparator + "location");
+        if(!locationFolder.exists()){
+            locationFolder.mkdir();
+        }
         FilenameFilter ymlFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
@@ -63,6 +66,9 @@ public class Locate {
 
     public Locate register(@Nullable String ignored){
         File locationFolder = new File(plugin.getDataFolder().getPath() + File.pathSeparator + "location");
+        if(!locationFolder.exists()){
+            locationFolder.mkdir();
+        }
         FilenameFilter ymlFilter = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
