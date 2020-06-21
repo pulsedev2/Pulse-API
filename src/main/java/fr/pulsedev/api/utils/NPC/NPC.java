@@ -12,13 +12,14 @@ package fr.pulsedev.api.utils.NPC;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.minecraft.server.v1_15_R1.EntityPlayer;
-import net.minecraft.server.v1_15_R1.MinecraftServer;
-import net.minecraft.server.v1_15_R1.PlayerInteractManager;
-import net.minecraft.server.v1_15_R1.WorldServer;
+import fr.pulsedev.api.Interfaces.CustomPlugin;
+import fr.pulsedev.api.Player.ApiPlayer;
+import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -35,31 +36,46 @@ public class NPC extends EntityPlayer{
     private PlayerInteractManager playerInteractManager = new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle());
     private String skin;
     private String signature;
+    private CustomPlugin plugin;
 
-    public NPC(MinecraftServer minecraftserver, WorldServer worldserver, GameProfile gameprofile, PlayerInteractManager playerInteractManager) {
+    public NPC(MinecraftServer minecraftserver, WorldServer worldserver, GameProfile gameprofile, PlayerInteractManager playerInteractManager, CustomPlugin plugin) {
         super(minecraftserver, worldserver, gameprofile, playerInteractManager);
         this.npc = new EntityPlayer(minecraftserver, worldserver, gameprofile, playerInteractManager);
+        this.plugin = plugin;
     }
 
-    public NPC(){
-        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), "Default Name"), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()));
+    public NPC(CustomPlugin plugin){
+        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), "Default Name"), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
     }
 
-    public NPC(GameProfile gameProfile){
-        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), gameProfile, new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()));
+    public NPC(GameProfile gameProfile, CustomPlugin plugin){
+        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), gameProfile, new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
         this.gameProfile = gameProfile;
         this.name = gameProfile.getName();
         this.uuid = gameProfile.getId();
     }
 
-    public NPC(String name){
-        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), name), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()));
+    public NPC(String name, CustomPlugin plugin){
+        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), name), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
         this.name = name;
     }
 
-    public NPC(UUID uuid){
-        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(uuid, "Default Name"), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()));
+    public NPC(UUID uuid, CustomPlugin plugin){
+        this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(uuid, "Default Name"), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
         this.uuid = uuid;
+    }
+
+    public void spawn(ApiPlayer player){
+        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
+        connection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getInstance(), new Runnable() {
+            @Override
+            public void run() {
+                connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, getNPC()));
+            }
+        }, 10L);
+
     }
 
     public void setGameProfile(GameProfile gameProfile){
@@ -103,46 +119,21 @@ public class NPC extends EntityPlayer{
         this.gameProfile.getProperties().put("textures", new Property("textures", getSkin(), signature));
     }
 
-    public String getName(){
-        return name;
-    }
-
-    public UUID getUUID(){
-        return uuid;
-    }
-
-    public GameProfile getGameProfile(){
-        return gameProfile;
-    }
-
-    public EntityPlayer getNpc() {
-        return npc;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
 
     @Nullable
     @Override
-    public MinecraftServer getMinecraftServer() {
-        return minecraftServer;
-    }
+    public MinecraftServer getMinecraftServer() { return minecraftServer; }
 
     @Override
-    public WorldServer getWorldServer() {
-        return worldServer;
-    }
+    public WorldServer getWorldServer() { return worldServer; }
 
-    public PlayerInteractManager getPlayerInteractManager() {
-        return playerInteractManager;
-    }
-
-    public String getSkin(){
-        return skin;
-    }
-
-    public String getSignature(){
-        return signature;
-    }
+    public String getName(){ return name; }
+    public UUID getUUID(){ return uuid; }
+    public GameProfile getGameProfile(){ return gameProfile; }
+    public EntityPlayer getNpc() { return npc; }
+    public PlayerInteractManager getPlayerInteractManager() { return playerInteractManager; }
+    public String getSkin(){ return skin; }
+    public String getSignature(){ return signature; }
+    public NPC getNPC(){ return this; }
+    public Player getEntityPlayer(){ return this.getBukkitEntity().getPlayer(); }
 }

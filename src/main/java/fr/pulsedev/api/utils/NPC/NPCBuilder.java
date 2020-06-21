@@ -1,6 +1,7 @@
 package fr.pulsedev.api.utils.NPC;
 
 import com.mojang.authlib.GameProfile;
+import fr.pulsedev.api.Interfaces.CustomPlugin;
 import net.minecraft.server.v1_15_R1.MinecraftServer;
 import net.minecraft.server.v1_15_R1.PlayerInteractManager;
 import net.minecraft.server.v1_15_R1.WorldServer;
@@ -19,8 +20,8 @@ public class NPCBuilder {
     private NPC npc;
     private NPCBuilder npcBuilder;
 
-    public NPCBuilder(){
-        this.npc = new NPC();
+    public NPCBuilder(CustomPlugin plugin){
+        this.npc = new NPC(plugin);
     }
 
     public NPCBuilder setGameProfile(GameProfile gameProfile){
