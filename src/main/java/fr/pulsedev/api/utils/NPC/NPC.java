@@ -18,7 +18,6 @@ import net.minecraft.server.v1_15_R1.*;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_15_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_15_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 import javax.annotation.Nullable;
@@ -27,7 +26,7 @@ import java.util.UUID;
 
 public class NPC extends EntityPlayer{
 
-    private EntityPlayer npc;
+    private final EntityPlayer npc;
     private String name = "Default Name";
     private UUID uuid = UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc");
     private GameProfile gameProfile = new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), "Default Name");
@@ -36,45 +35,40 @@ public class NPC extends EntityPlayer{
     private PlayerInteractManager playerInteractManager = new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle());
     private String skin;
     private String signature;
-    private CustomPlugin plugin;
+    private final CustomPlugin<?> plugin;
 
-    public NPC(MinecraftServer minecraftserver, WorldServer worldserver, GameProfile gameprofile, PlayerInteractManager playerInteractManager, CustomPlugin plugin) {
+    public NPC(MinecraftServer minecraftserver, WorldServer worldserver, GameProfile gameprofile, PlayerInteractManager playerInteractManager, CustomPlugin<?> plugin) {
         super(minecraftserver, worldserver, gameprofile, playerInteractManager);
         this.npc = new EntityPlayer(minecraftserver, worldserver, gameprofile, playerInteractManager);
         this.plugin = plugin;
     }
 
-    public NPC(CustomPlugin plugin){
+    public NPC(CustomPlugin<?> plugin){
         this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), "Default Name"), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
     }
 
-    public NPC(GameProfile gameProfile, CustomPlugin plugin){
+    public NPC(GameProfile gameProfile, CustomPlugin<?> plugin){
         this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), gameProfile, new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
         this.gameProfile = gameProfile;
         this.name = gameProfile.getName();
         this.uuid = gameProfile.getId();
     }
 
-    public NPC(String name, CustomPlugin plugin){
+    public NPC(String name, CustomPlugin<?> plugin){
         this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(UUID.fromString("668902fb-25a6-440a-80f3-f626aa9430fc"), name), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
         this.name = name;
     }
 
-    public NPC(UUID uuid, CustomPlugin plugin){
+    public NPC(UUID uuid, CustomPlugin<?> plugin){
         this(((CraftServer) Bukkit.getServer()).getServer(), ((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle(), new GameProfile(uuid, "Default Name"), new PlayerInteractManager(((CraftWorld) Objects.requireNonNull(Bukkit.getServer().getWorld(((CraftServer) Bukkit.getServer()).getServer().getWorld()))).getHandle()), plugin);
         this.uuid = uuid;
     }
 
     public void spawn(ApiPlayer player){
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+        PlayerConnection connection = player.getHandle().playerConnection;
         connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, this));
         connection.sendPacket(new PacketPlayOutNamedEntitySpawn(this));
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getInstance(), new Runnable() {
-            @Override
-            public void run() {
-                connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, getNPC()));
-            }
-        }, 10L);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin.getInstance(), () -> connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, getNPC())), 10L);
 
     }
 

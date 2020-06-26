@@ -15,7 +15,12 @@ import java.sql.Statement;
 public class SQL {
 
     private Connection connection;
-    private String base, host, database, user, password, port;
+    private final String base;
+    private final String host;
+    private final String database;
+    private final String user;
+    private final String password;
+    private final String port;
 
     public SQL(String base, String host, String port, String database, String user, String password) {
         this.base = base;

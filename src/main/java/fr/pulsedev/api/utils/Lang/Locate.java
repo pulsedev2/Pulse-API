@@ -23,9 +23,9 @@ import java.util.HashMap;
 
 public class Locate {
 
-    private Plugin plugin;
-    private HashMap<String, FileConfiguration> locations;
-    private File[] locationFiles;
+    private final Plugin plugin;
+    private final HashMap<String, FileConfiguration> locations;
+    private final File[] locationFiles;
 
     public HashMap<String, FileConfiguration> getLocations() {
         return locations;
@@ -50,16 +50,12 @@ public class Locate {
         if(!locationFolder.exists()){
             locationFolder.mkdir();
         }
-        FilenameFilter ymlFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".yml");
-            }
-        };
+        FilenameFilter ymlFilter = (dir, name) -> name.endsWith(".yml");
         File[] fileList = locationFolder.listFiles(ymlFilter);
         assert fileList != null;
         for(File file:fileList){
             FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+            assert locations != null;
             locations.put(file.getName().replace(".yml", ""), configuration);
         }
     }
@@ -69,16 +65,12 @@ public class Locate {
         if(!locationFolder.exists()){
             locationFolder.mkdir();
         }
-        FilenameFilter ymlFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".yml");
-            }
-        };
+        FilenameFilter ymlFilter = (dir, name) -> name.endsWith(".yml");
         File[] fileList = locationFolder.listFiles(ymlFilter);
         assert fileList != null;
         for(File file:fileList){
             FileConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+            assert locations != null;
             locations.put(file.getName().replace(".yml", ""), configuration);
         }
 
@@ -86,6 +78,7 @@ public class Locate {
     }
 
     public String getString(String unlocalizedName, String id){
+        assert this.locations != null;
         return this.locations.get(unlocalizedName).getString(id);
     }
 }

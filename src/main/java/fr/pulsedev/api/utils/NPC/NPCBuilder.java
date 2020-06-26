@@ -17,10 +17,10 @@ import java.util.UUID;
  */
 public class NPCBuilder {
 
-    private NPC npc;
+    private final NPC npc;
     private NPCBuilder npcBuilder;
 
-    public NPCBuilder(CustomPlugin plugin){
+    public NPCBuilder(CustomPlugin<?> plugin){
         this.npc = new NPC(plugin);
     }
 

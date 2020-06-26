@@ -24,11 +24,11 @@ import java.util.Objects;
 
 public class ApiPlayer extends CraftPlayer {
 
-    private Player player;
-    private SqlManager sqlManager;
-    private CustomPlugin plugin;
+    private final Player player;
+    private final SqlManager sqlManager;
+    private final CustomPlugin<?> plugin;
 
-    public ApiPlayer(Player player, CustomPlugin plugin){
+    public ApiPlayer(Player player, CustomPlugin<?> plugin){
         super((CraftServer) player.getServer(), ((CraftPlayer)player).getHandle());
 
         this.plugin = plugin;

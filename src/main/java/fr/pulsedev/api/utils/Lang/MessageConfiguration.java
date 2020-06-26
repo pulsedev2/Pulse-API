@@ -17,8 +17,8 @@ import java.util.TreeMap;
 
 public class MessageConfiguration {
 
-    private TreeMap<String, String> replacement;
-    private String id;
+    private final TreeMap<String, String> replacement;
+    private final String id;
 
     public MessageConfiguration(String id, @Nullable TreeMap<String, String> replacement){
         this.id = id;
@@ -26,44 +26,48 @@ public class MessageConfiguration {
     }
 
     public void addReplacement(String from, String to){
-        if(isAlredyIn(from)){
-            getNewString(from);
+        if(isAlreadyIn(from)){
+            from = getNewString(from);
         }
+        assert replacement != null;
         replacement.put(from, to);
     }
 
     public void removeReplacement(String from){
+        assert replacement != null;
         replacement.remove(from);
     }
 
     public void changeReplacement(String of, String by){
+        assert replacement != null;
         replacement.remove(of);
         addReplacement(of,by);
     }
 
     public String getNewString(String base){
         int i = 0;
-        String newKey = base;
-        while (isAlredyIn(base)){
-            if(i >= 5){
-                break;
-            }
-            newKey += "_";
+        StringBuilder newKey = new StringBuilder(base);
+        while (isAlreadyIn(base)){
+            if(i >= 5)break;
+            newKey.append("_");
             i++;
         }
         if(i == 5){
             throw new ArrayIndexOutOfBoundsException("You've reach maximum for this key !  KEY =" + base);
         }
-        return newKey;
+        return newKey.toString();
     }
 
-    public boolean isAlredyIn(String toVerify){
+    public boolean isAlreadyIn(String toVerify){
+        assert replacement != null;
         return !replacement.containsKey(toVerify);
     }
 
     public String getReplacement(String of){
+        assert replacement != null;
         return replacement.get(of);
     }
+
     public TreeMap<String, String> getListOfReplacement(){
         return this.replacement;
     }

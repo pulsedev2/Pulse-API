@@ -9,10 +9,10 @@ package fr.pulsedev.api.DataManagement.RedisManager;
  */
 public class RedisCredentials {
 
-    private String ip;
-    private String password;
-    private int port;
-    private String clientName;
+    private final String ip;
+    private final String password;
+    private final int port;
+    private final String clientName;
 
     public RedisCredentials(String ip, String password, int port, String clientName){
         this.ip = ip;

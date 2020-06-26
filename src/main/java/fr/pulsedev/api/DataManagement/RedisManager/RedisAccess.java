@@ -16,7 +16,7 @@ import org.redisson.config.Config;
 public class RedisAccess {
 
     public static  RedisAccess INSTANCE;
-    private RedissonClient redissonClient;
+    private final RedissonClient redissonClient;
     private int threadNumber;
     private int nettyThreadsNumber;
     private int dateBaseNumber;
@@ -24,6 +24,9 @@ public class RedisAccess {
     public RedisAccess(RedisCredentials redisCredentials, int threadNumber, int nettyThreadsNumber, int dateBaseNumber){
         INSTANCE = this;
         this.redissonClient = initRedisson(redisCredentials);
+        this.threadNumber = threadNumber;
+        this.nettyThreadsNumber = nettyThreadsNumber;
+        this.dateBaseNumber = dateBaseNumber;
     }
 
     public RedisAccess(RedisCredentials redisCredentials, int threadNumber,int dateBaseNumber){

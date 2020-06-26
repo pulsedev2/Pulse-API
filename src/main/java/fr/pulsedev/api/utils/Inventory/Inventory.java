@@ -21,13 +21,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class Inventory {
 
-    private int size;
-    private String name;
-    private transient Plugin plugin;
-    private HashMap<Integer, String> itemStacks = new HashMap<>();
+    private final int size;
+    private final String name;
+    private final transient Plugin plugin;
+    private final HashMap<Integer, String> itemStacks = new HashMap<>();
 
     public Inventory(int size, String name, Plugin plugin){
         this.size = size;
@@ -69,13 +70,14 @@ public class Inventory {
             ItemMeta itemMeta = itemStack.getItemMeta();
             JsonObject jsonMeta = new JsonObject();
 
+            assert itemMeta != null;
             if(itemMeta.hasCustomModelData()) jsonMeta.addProperty("custom-model-data",itemMeta.getCustomModelData());
             if(itemMeta.hasDisplayName()) jsonMeta.addProperty("displayname", itemMeta.getDisplayName());
             if(itemMeta.hasLocalizedName()) jsonMeta.addProperty("localized-name", itemMeta.getLocalizedName());
             if(itemMeta.isUnbreakable()) jsonMeta.addProperty("unbreakable", true);
             if(itemMeta.hasLore()){
                 JsonArray jsonLore = new JsonArray();
-                itemMeta.getLore().forEach(string -> jsonLore.add(new JsonPrimitive(string)));
+                Objects.requireNonNull(itemMeta.getLore()).forEach(string -> jsonLore.add(new JsonPrimitive(string)));
                 jsonMeta.add("lore", jsonLore);
             }
 

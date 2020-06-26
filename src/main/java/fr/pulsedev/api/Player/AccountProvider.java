@@ -19,14 +19,16 @@ import org.bukkit.entity.Player;
 import org.redisson.api.RBucket;
 import org.redisson.api.RedissonClient;
 
+import java.util.Objects;
+
 public class AccountProvider {
 
-    private RedisAccess redisAccess;
-    private Player player;
+    private final RedisAccess redisAccess;
+    private final Player player;
     private String REDIS_KEY =  "account:";
-    private CustomPlugin customPlugin;
+    private final CustomPlugin<?> customPlugin;
 
-    public AccountProvider(Player player, CustomPlugin customPlugin){
+    public AccountProvider(Player player, CustomPlugin<?> customPlugin){
         this.redisAccess = RedisAccess.INSTANCE;
         this.player = player;
         this.customPlugin = customPlugin;
@@ -52,7 +54,7 @@ public class AccountProvider {
     private ApiPlayer getPlayerFromDataBase(){
         final SqlManager sqlManager = new SqlManager(customPlugin.getSQL());
 
-        return new ApiPlayer(Bukkit.getPlayer(sqlManager.getString("player", "uuid", player.getUniqueId().toString(), "name")), customPlugin);
+        return new ApiPlayer(Objects.requireNonNull(Bukkit.getPlayer(sqlManager.getString("player", "uuid", player.getUniqueId().toString(), "name"))), customPlugin);
     }
 
 
